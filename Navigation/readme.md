@@ -1,5 +1,5 @@
 # Description
-This contains all all the files used to create the final file `tcp_arduino.py`
+This contains all all the files used to create the final file `tcp_arduino.py` and `tcp_server_joystick.py`
 
 ## How to use:
 1. Run the `tcp_server_joystick.py` code to start the server and send data to the client. The server is configured to transmit a data from joystick in .csv format  [ axes, buttons, hats]
