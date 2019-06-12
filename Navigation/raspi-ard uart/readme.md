@@ -10,4 +10,5 @@ It contains 2 files:
 + data is kept as a character, but a string can also be sent
 
 ### Errors/Issues - ard:
-+ Nope
++ The prototype code provided is expected to give a `Port busy Error` because the python code is using it to transmit data. 
++ A static testing of the code was done, and i found that satisfactory.

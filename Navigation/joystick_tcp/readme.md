@@ -1,16 +1,14 @@
 # Description
-This folder contains:
-1. Server file:
-	+ Establishes connection via terminal and transmits data in bytes
-2. Client File:
-	+ Receives data in bytes and parses them to string
+It contains 2 files:
+1. raspi.py
+	+ This initialises the UART connection from raspi side, writes data to arduino
+2. ard.ino
+	+ This receives data from UART and identifies certain characters
 
-### Errors/Issues - Server:
-+ `PORT` > 1023 (linux permissive port for tcp)
-+ `clock.tick(int)` is necessary 
-+ It gives a `bad file descripter` error on incorrect server ending.
-+ The server binding sometimes fails because Linux does not close the connection immediately, but waits for a timeout of approx 2 mins before assuming its closed. Solution is to manually close the connection using `tcpkill`.		*resolved - check navigation readme*
-+ Could not connect to a remote client, the code works for **local client only**. Possible port number issue (will review later).
+### Errors/Issues - raspi:
++ `serial.port` takes the port address (this is seen in the `tools -> port` in arduino IDE)
++ data is kept as a character, but a string can also be sent
 
-### Errors/Issues - Client:
-+ Add the server ip address `192.168.x.x` in `HOST` and port number in `PORT`
+### Errors/Issues - ard:
++ The prototype code provided is expected to give a `Port busy Error` because the python code is using it to transmit data. 
++ A static testing of the code was done, and I found that satisfactory.
