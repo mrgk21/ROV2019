@@ -1,8 +1,8 @@
 import socket
 
-HOST = socket.gethostbyname("localhost") # Enter IP or Hostname of your server
+HOST = '192.168.1.121'  # Enter IP or Hostname of your server
 print(HOST)
-PORT = 1111  # Pick an open Port (1000+ recommended), must match the server port
+PORT = 8080  # Pick an open Port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 

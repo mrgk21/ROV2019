@@ -1,7 +1,7 @@
 import socket, serial, time
 
-HOST = socket.gethostbyname("localhost")
-PORT = 1111
+HOST = '192.168.1.121'
+PORT = 8080
 BUFFER_SIZE = 1024
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))

@@ -1,8 +1,8 @@
 import socket, random, time
 
 # HOST = socket.gethostbyname("localhost")  # Server IP
-HOST = '0.0.0.0'
-PORT = 1111  # Port
+HOST = '192.168.1.121'
+PORT = 8080  # Port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
 # s.close()

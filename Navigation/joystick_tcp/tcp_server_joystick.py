@@ -1,7 +1,7 @@
 import pygame, socket, time
 
 HOST = '0.0.0.0'  # IP address
-PORT = 1111  # Port
+PORT = 8080  # Port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
 
@@ -27,24 +27,23 @@ axes = joystick.get_numaxes()
 buttons = joystick.get_numbuttons()
 hats = joystick.get_numhats()
 
-
 done = False
 while not done:
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT: 
+		if event.type == pygame.QUIT:
 			done = True
 	data = ""
 	for i in range(axes):
 		axis = joystick.get_axis(i)
-		data += str("%.3f" % float(axis)) + ","
+		data += str(axis * 1000) + " "
 
 	for i in range(buttons):
 		button = joystick.get_button(i)
-		data += str(button) + ","
+		data += str(button) + " "
 
 	for i in range(hats):
 		hat = joystick.get_hat(i)
-		data += str(hat[0]) + ","
+		data += str(hat[0]) + " "
 		data += str(hat[1])
 
 	conn.send(bytes(data, "utf-8"))

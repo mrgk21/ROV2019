@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c9cd235-b297-496d-9e20-8d0145918266" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/joystick_tcp/joystick.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/joystick_tcp/tcp_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/joystick_tcp/tcp_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/joystick_tcp/tcp_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/joystick_tcp/tcp_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py" beforeDir="false" afterPath="$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raspi-ard uart/ard/ard.ino" beforeDir="false" afterPath="$PROJECT_DIR$/raspi-ard uart/ard/ard.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tcp_arduino.py" beforeDir="false" afterPath="$PROJECT_DIR$/tcp_arduino.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,47 +20,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="42" column="33" lean-forward="true" selection-start-line="42" selection-start-column="33" selection-end-line="42" selection-end-column="33" />
+            <state relative-caret-position="45">
+              <caret line="3" column="19" lean-forward="true" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tcp_arduino.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="20" column="23" lean-forward="true" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_server.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_client.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="31" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/joystick_tcp/joystick.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+            <state relative-caret-position="30">
+              <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -88,13 +62,13 @@
         <option value="$PROJECT_DIR$/tcp_client.py" />
         <option value="$PROJECT_DIR$/tcp_server.py" />
         <option value="$PROJECT_DIR$/raspi-ard uart/ard.ino" />
-        <option value="$PROJECT_DIR$/joystick_tcp/tcp_client.py" />
         <option value="$PROJECT_DIR$/raspi-ard uart/raspi.py" />
         <option value="$PROJECT_DIR$/joystick_tcp/temp.py" />
-        <option value="$PROJECT_DIR$/joystick_tcp/tcp_server.py" />
         <option value="$PROJECT_DIR$/joystick_tcp/joystick.py" />
-        <option value="$PROJECT_DIR$/tcp_arduino.py" />
+        <option value="$PROJECT_DIR$/joystick_tcp/tcp_server.py" />
+        <option value="$PROJECT_DIR$/joystick_tcp/tcp_client.py" />
         <option value="$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py" />
+        <option value="$PROJECT_DIR$/tcp_arduino.py" />
       </list>
     </option>
   </component>
@@ -110,7 +84,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -127,6 +100,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -144,7 +118,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.tcp_arduino">
+  <component name="RunManager" selected="Python.tcp_client">
     <configuration name="tcp_arduino" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Navigation" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -259,11 +233,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.tcp_arduino" />
-        <item itemvalue="Python.tcp_server_joystick" />
-        <item itemvalue="Python.tcp_client" />
-        <item itemvalue="Python.temp" />
         <item itemvalue="Python.tcp_server" />
+        <item itemvalue="Python.tcp_client" />
+        <item itemvalue="Python.tcp_server_joystick" />
+        <item itemvalue="Python.tcp_arduino" />
+        <item itemvalue="Python.temp" />
       </list>
     </recent_temporary>
   </component>
@@ -289,7 +263,7 @@
       <window_info id="Favorites" order="2" sideWeight="0.50242716" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32899022" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32899022" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3990228" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -315,30 +289,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/joystick_tcp/temp.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/joystick_tcp/joystick.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="31" selection-start-line="10" selection-start-column="31" selection-end-line="10" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/joystick_tcp/temp.py" />
     <entry file="file://$PROJECT_DIR$/raspi-ard uart/raspi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -349,17 +300,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tcp_arduino.py">
+    <entry file="file://$PROJECT_DIR$/joystick_tcp/joystick.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="20" column="23" lean-forward="true" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
+        <state relative-caret-position="555">
+          <caret line="37" selection-start-line="37" selection-end-line="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="13" lean-forward="true" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="24" lean-forward="true" selection-start-line="9" selection-start-column="24" selection-end-line="9" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/joystick_tcp/tcp_server_joystick.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="42" column="33" lean-forward="true" selection-start-line="42" selection-start-column="33" selection-end-line="42" selection-end-column="33" />
+        <state relative-caret-position="45">
+          <caret line="3" column="19" lean-forward="true" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tcp_arduino.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
         </state>
       </provider>
     </entry>
