@@ -5,6 +5,7 @@
 
 class pdcv
 {
+  static int delay_ms;
 	int pin1;
 	int pin2;
 	bool reverseDir = false;
@@ -14,7 +15,7 @@ public:
 	void pdcv_forward();
 	void pdcv_backward();
 	void pdcv_static();
-
+  static void setDelay(int);
 };
 
 #endif
