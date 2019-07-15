@@ -1,6 +1,6 @@
 #include "pdcv.h"
 
-int pdcv::delay_ms = 0;
+
 
 void pdcv::setDelay(int delay)
 {

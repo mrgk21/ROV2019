@@ -17,5 +17,5 @@ public:
 	void pdcv_static();
   static void setDelay(int);
 };
-
+int pdcv::delay_ms = 0;
 #endif

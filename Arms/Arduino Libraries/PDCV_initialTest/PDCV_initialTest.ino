@@ -14,13 +14,14 @@ void setup() {
   {
     p[i].pdcv_setup();
   }
-  pdcv::setDelay(300);
+  pdcv::setDelay(500);
   pinMode(13, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  /*
   if (Serial.available())
   {
     a = Serial.readString();
@@ -62,4 +63,32 @@ void loop() {
         break;
     }
   }
+  */
+  /*
+  p[0].pdcv_forward();
+  p[0].pdcv_forward();
+  p[0].pdcv_forward();
+  p[0].pdcv_backward();
+  p[0].pdcv_backward();
+  p[0].pdcv_backward();
+  p[1].pdcv_forward();
+  p[1].pdcv_forward();
+  p[1].pdcv_forward();
+  p[1].pdcv_backward();
+  p[1].pdcv_backward();
+  p[1].pdcv_backward();
+  p[2].pdcv_forward();
+  p[2].pdcv_forward();
+  p[2].pdcv_forward();
+  p[2].pdcv_backward();
+  p[2].pdcv_backward();
+  p[2].pdcv_backward();
+  */
+  p[3].pdcv_forward();
+  p[3].pdcv_forward();
+  p[3].pdcv_forward();
+  p[3].pdcv_backward();
+  p[3].pdcv_backward();
+  p[3].pdcv_backward();
+  
 }
