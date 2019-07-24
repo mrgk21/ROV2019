@@ -1,0 +1,45 @@
+
+#include <String.h>
+#include <Servo.h>
+
+String str1,str2,str3;
+float offset1=16, offset2=123, offset3=80;
+float input1=0,input2=0,input3=0, final1 =0,final2 =0,final3 =0;
+Servo myservo1; // create servo object to control a servo
+Servo myservo2;
+Servo myservo3;
+
+
+void setup() {
+  Serial.begin(9600);
+  myservo1.attach(3);  // attaches the servo on pin 9 to the servo object
+  myservo2.attach(5);
+  myservo3.attach(9);
+}
+
+void loop() {
+  
+while (!Serial.available());  
+  str1=Serial.readString();
+  input1=str1.toInt();
+  final1 = input1+offset1;
+  Serial.println(final1);
+  myservo1.write(final1); // tell servo to go to a particular angle
+//  delay(2000);
+
+  while (!Serial.available());  
+  str2=Serial.readString();
+  input2=str2.toInt();
+  final2 = input2+offset2;
+  Serial.println(final2);
+  myservo2.write(final2);
+//  delay(2000);
+
+  while (!Serial.available());  
+  str3=Serial.readString();
+  input3=str3.toInt();
+  final3 = input3+offset3;
+  Serial.println(final3);
+  myservo3.write(final3);
+
+}
