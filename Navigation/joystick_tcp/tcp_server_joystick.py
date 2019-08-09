@@ -1,7 +1,7 @@
 import pygame, socket, time
 
 HOST = '0.0.0.0'  # IP address
-PORT = 8080  # Port
+PORT = 60000  # Port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created')
 
