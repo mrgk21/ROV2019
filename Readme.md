@@ -1,2 +1,2 @@
 ## Navigation
-+ Added joystick control from PC to ard
++ Added COMS from PC to ard
