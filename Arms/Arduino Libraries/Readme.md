@@ -32,7 +32,7 @@ pdcv(int p1, int p2, bool reverse, int _analogPin, double _Kp_pos, double _Kd_po
 -> This uses different _PID_ for both the arm movements(one for pos(forward) and one for neg(backward)).
 
 ## Functions:
-1. [void pdcv_setup()](#markdown-header-pdcvSetup)
+1. [void pdcv_setup()](#pdcvSetup)
 2. [void pdcv_forward(bool backToStatic=true)](#pdcvForward)
 3. [void pdcv_backward(bool backToStatic=true)](#pdcvBackward)
 4. [void pdcv_static()](#pdcvStatic)
