@@ -62,11 +62,17 @@ function updateStatus()
 		var count=0;
 	    var controller = controllers[j];
 	    var buttons= [];
-	    var axes = [controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[5].toFixed(2),-parseInt(controller.axes[6].toFixed(2))];
+
+		var axes = [];
+		if(window.navigator.platform === "Linux x86_64")
+			axes=[controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[2].toFixed(2),-parseInt(controller.axes[3].toFixed(2))];
+		else
+			axes = [controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[5].toFixed(2),-parseInt(controller.axes[6].toFixed(2))];
+
 	    $("#gp1_axes").empty();
 	    for(i in axes)
 	    {
-			$("#gp1_axes").append("<span> axes["+i+"]: "+axes[i]+"</span><br>");
+			$("#gp1_axes").append("<span> axes["+i+"]: "+ axes[i]+"</span><br>");
 	    }
 	    for(i in controller.buttons)
 	    {
