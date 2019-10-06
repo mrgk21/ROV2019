@@ -1,27 +1,36 @@
 #include "pdcv.h"
 #define ARRAY_SIZE(A) sizeof(A)/sizeof(A[0])
 
+#define FORMAT "%d_%d%c"
+
 String a = "";
+int dof;
 int linkIndex;
 char motion;
 
-//pdcv p[] = {pdcv(2, 3, true), pdcv(4, 5 , false), pdcv(6, 7 , false)};
 
-pdcv p(2, 3, true, A0,1.7,0.25,1.8,0.3);
+int anaRead;
+pdcv p_6dof[] = {pdcv(12, 13, false), pdcv(10, 11, false), pdcv(8, 9, true), pdcv(4, 5, false), pdcv(2, 3, false)};
+pdcv p_4dof[] = {pdcv(6, 7, true), pdcv(27, 29, false), pdcv(30, 31, false), pdcv(39, 41, false)};
 
-//pdcv p(2,3,true);
+
+//pdcv p(2, 3, true, A0,1.7,0.25,1.8,0.3);
+
+//pdcv p(8, 9, true);
+
+
 
 void setup() {
   pinMode(13, OUTPUT);
-  //  for (int i = 0; i < ARRAY_SIZE(p); i++)
-  //  {
-  //    p[i].pdcv_setup();
-  //  }
-
-  p.pdcv_setup();
-
-  //pdcv::setDelay(200);
-
+  for (int i = 0; i < ARRAY_SIZE(p_6dof); i++)
+  {
+    p_6dof[i].pdcv_setup();
+  }
+  for (int i = 0; i < ARRAY_SIZE(p_4dof); i++)
+  {
+    p_4dof[i].pdcv_setup();
+  }
+  pdcv::setDelay(1000);
 
   pinMode(13, OUTPUT);
   Serial.begin(9600);
@@ -30,47 +39,41 @@ void setup() {
 void loop() {
   if (Serial.available())
   {
-    int out = Serial.readString().toInt();
-    p.pdcv_setPoint(out);
-  }
-  p.pdcv_PID();
-
-/*  
-    if(Serial.available())
-    {
     a = Serial.readString();
-    String temp_num;
-    String temp_motion;
-    for (int i = 0; i < a.length(); i++)
+    Serial.flush();
+
+    sscanf(&a[0], FORMAT, &dof, &linkIndex, &motion);
+    linkIndex--;
+    Serial.print("4DOF: ");
+    Serial.println(dof);
+    Serial.print("linkIndex: ");
+    Serial.println(linkIndex);
+    Serial.print("motion: ");
+    Serial.println((motion == 'f' ? "Forward" : "Backward"));
+    if(dof==4)
     {
-      if (isDigit(a[i]))
+      p_4dof[linkIndex].pdcv_setSpeed(255);
+      if(motion=='f')
       {
-        temp_num += a[i];
+        p_4dof[linkIndex].pdcv_forward(true);
       }
-      if (isAlpha(a[i]))
+      else
       {
-        temp_motion += a[i];
+        
+        p_4dof[linkIndex].pdcv_backward(true);
       }
     }
-
-    p.pdcv_setSpeed(temp_num.toInt());
-    motion = temp_motion[0];
-    Serial.println(temp_num.toInt());
-    Serial.println(motion);
-    switch (motion)
+    else if(dof==6)
     {
-      case 'f':
-        p.pdcv_forward(false);
-        break;
-      case 'b':
-        p.pdcv_backward(false);
-        break;
+      p_6dof[linkIndex].pdcv_setSpeed(255);
+      if(motion=='f')
+      {
+        p_6dof[linkIndex].pdcv_forward(true);
+      }
+      else
+      {
+        p_6dof[linkIndex].pdcv_backward(true);
+      }
     }
-
-  
-}
-*/
-
-
-
+  }
 }
