@@ -21,7 +21,7 @@ function connecthandler(e) {
 function addgamepad(gamepad) {
 	controllers[gamepad.index] = gamepad;
 	ServerDetectedJoy[gamepad.index] = {id:gamepad.id,status:false};
-  	$("#controller1").append("<h1>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h1><br><div id='gp1_axes'></div>");
+  	$("#controller1").append("<h1>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h1><br><div id='gp1_axes'></div><br><div id='gp1_buttons'></div>");
   	interval = setInterval(updateStatus,1000/60);
 }
 
@@ -64,6 +64,7 @@ function updateStatus()
 	    var buttons= [];
 	    var axes = [controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[5].toFixed(2),-parseInt(controller.axes[6].toFixed(2))];
 	    $("#gp1_axes").empty();
+	    $("#gp1_buttons").empty();
 	    for(i in axes)
 	    {
 			$("#gp1_axes").append("<span> axes["+i+"]: "+axes[i]+"</span><br>");
@@ -71,6 +72,10 @@ function updateStatus()
 	    for(i in controller.buttons)
 	    {
 	    	buttons.push(controller.buttons[i].value);
+	    }
+	    for(i in buttons)
+	    {
+			$("#gp1_buttons").append("<span> buttons["+i+"]: "+buttons[i]+"</span><br>");
 	    }
 	    if(prev_btns.length==0)
 	    {
