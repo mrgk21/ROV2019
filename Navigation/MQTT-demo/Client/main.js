@@ -1,6 +1,6 @@
 var socket = io();
 var msg;
-var thresh=0.1;
+var thresh=10;
 
 
 var haveEvents = 'ongamepadconnected' in window;
@@ -62,7 +62,8 @@ function updateStatus()
 		var count=0;
 	    var controller = controllers[j];
 	    var buttons= [];
-	    var axes = [controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[5].toFixed(2),-parseInt(controller.axes[6].toFixed(2))];
+	    var axes = [Math.floor(controller.axes[0]*100),-Math.floor(controller.axes[1]*100),Math.floor(controller.axes[5]*100),-parseInt(controller.axes[6].toFixed(2))];
+	    var c_axes = controller.axes;
 	    $("#gp1_axes").empty();
 	    $("#gp1_buttons").empty();
 	    for(i in axes)
@@ -109,8 +110,14 @@ function updateStatus()
 			
 		  	for(j in prevAxes)
 		  	{
-		  		if(Math.abs(prevAxes[j]-axes[j])> thresh)
+		  		if(Math.abs(prevAxes[j]-axes[j])> thresh && j != 3)
 		  		{
+		  			msg_axes.push(axes[j] - (axes[j]%10));
+		  			count++;
+		  		}
+		  		else if(Math.abs(prevAxes[j]-axes[j])!=0 && j==3)
+		  		{
+		  			console.log(j);
 		  			msg_axes.push(axes[j]);
 		  			count++;
 		  		}
