@@ -62,7 +62,8 @@ function updateStatus()
 		var count=0;
 	    var controller = controllers[j];
 	    var buttons= [];
-	    var axes = [Math.floor(controller.axes[0]*100),-Math.floor(controller.axes[1]*100),Math.floor(controller.axes[5]*100),-parseInt(controller.axes[6].toFixed(2))];
+	    var axes = [Math.floor(controller.axes[0]*100),-Math.floor(controller.axes[1]*100),Math.floor(controller.axes[5]*100),-parseInt(controller.axes[6].toFixed(2)),controller.axes[9].toFixed(2)];
+	    var hats = controllers.hats;
 	    var c_axes = controller.axes;
 	    $("#gp1_axes").empty();
 	    $("#gp1_buttons").empty();
@@ -110,7 +111,13 @@ function updateStatus()
 			
 		  	for(j in prevAxes)
 		  	{
-		  		if(Math.abs(prevAxes[j]-axes[j])> thresh && j != 3)
+		  		if(j==4 && prevAxes[j] != axes[j])
+		  		{
+		  			console.log(axes[j]);
+		  			msg_axes.push(axes[j]);
+		  			count++;
+		  		}
+		  		else if(Math.abs(prevAxes[j]-axes[j])> thresh && j != 3)
 		  		{
 		  			msg_axes.push(axes[j] - (axes[j]%10));
 		  			count++;

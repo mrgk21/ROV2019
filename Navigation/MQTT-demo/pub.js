@@ -1,3 +1,10 @@
+var args = process.argv.slice(2);
+var ip="192.168.0.13";
+if(args.indexOf("-h") != -1)
+{
+	ip =args[args.indexOf("-h")+1];
+}
+
 var mqtt = require('mqtt');
 var express = require('express');
 var app = express();
@@ -8,7 +15,7 @@ app.use('/Client',express.static(__dirname + '/Client'));
 
 var server = app.listen(8000,'localhost');
 var io = require('socket.io').listen(server);
-var client  = mqtt.connect('mqtt://192.168.43.128');
+var client  = mqtt.connect('mqtt://'+ip);
 
 client.on('connect', function () {
     client.subscribe('navFeed', function (err) {
@@ -31,6 +38,13 @@ client.on('connect', function () {
         console.log('subscribed to link6D');
       }
     });
+
+    client.subscribe('pumpSolenoid', function (err) {
+      if (!err) 
+      {
+      	console.log('subscribed to pumpSolenoid');
+      }
+    });
 });
 
 client.on('message', function (topic, message) {
@@ -46,11 +60,13 @@ var controllers=[];
 var prev_velocities = undefined;
 var prev_arm4 = undefined;
 var prev_arm6 = undefined;
+var prev_pump = undefined;
 
 //DATA elements
 var velocities={x:0,y:0,z:0};
-var link4D = {'1':0,'2':0,'3':0,'4':0};
+var link4D = {'1':0,'2':0,'3':0,'4':0,'5':0};
 var link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
+var pump = 0;
 
 //Link counters
 var curr_l4=0;
@@ -66,6 +82,7 @@ var gripper6 = false;
 
 //Mode switch booleans
 const ModeEnum = Object.freeze({"nav":1, "dof_4":2, "dof_6":3});
+const HatState = Object.freeze({"ZERO":1.29, "UP":-1.00, "DOWN":0.14,"LEFT":0.71,"RIGHT":-0.43});
 var joyMode = undefined;
 
 function map(value,range_min,range_max,out_range_min,out_range_max)
@@ -130,12 +147,15 @@ io.on('connection',function(socket){
         velocities.z = 0;
         link4D = {'1':0,'2':0,'3':0,'4':0};
 		link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
+        pump = 0;
         var msg = JSON.stringify(velocities);
         client.publish('navFeed1',msg);
         msg = JSON.stringify(link4D);
         client.publish('link4D',msg);
         msg = JSON.stringify(link6D);
         client.publish('link6D',msg);
+        msg = JSON.stringify(pump);
+        client.publish('pumpSolenoid',msg);
 
     });
     socket.on('message',function (data) {
@@ -156,6 +176,24 @@ io.on('connection',function(socket){
 				joyMode = ModeEnum.dof_6;
 				console.log("ARM_6 MODE:");
 			}
+			if(data["axes"][4] == HatState.ZERO)
+			{
+				pump = 0;
+			}
+			else if(data["axes"][4] == HatState.UP)
+			{
+				pump = 1;	
+			}
+			else if(data["axes"][4] == HatState.DOWN)
+			{
+				pump = -1;
+			}
+			if(pump != prev_pump)
+			{
+				prev_pump = pump;
+				var msg = JSON.stringify({dir:pump});
+				client.publish('pumpSolenoid',msg);
+			}
 
 			if(joyMode != ModeEnum.nav)
 			{
@@ -174,7 +212,7 @@ io.on('connection',function(socket){
 					if(joyMode == ModeEnum.dof_4)
 					{
 						gripper4 = !gripper4;
-						link4D["4"] = gripper4===true? 1 : 0;
+						link4D["5"] = gripper4===true? 1 : 0;
 					}
 					if(joyMode == ModeEnum.dof_6)
 					{
@@ -224,9 +262,9 @@ io.on('connection',function(socket){
         		if(changeLink)
         		{
         			curr_l4++;
-        			curr_l4%=3;
+        			curr_l4%=4;
         			changeLink = false;
-        			link4D = {'1':0,'2':0,'3':0,'4':0};
+        			link4D = {'1':0,'2':0,'3':0,'4':0,'5':0};
         		}
         		link4D[(curr_l4+1).toString()] = parseInt(map(data["axes"][1],-100,100,-255,255));
 
