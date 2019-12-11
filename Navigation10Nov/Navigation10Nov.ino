@@ -12,8 +12,8 @@ String data, prevData;
 
 
 /**** PUMP SOLENOID *****/
-#define PUMP_PIN 50
-#define SOL_PIN 48
+#define PUMP_PIN 52
+#define SOL_PIN 53
 
 void PumpSetup()
 {
@@ -80,7 +80,9 @@ void PitchCorrect()
 
 /*******************    THRUSTERS   ***********************/
 Servo thrusters[6];
-int servoPin[] = {3, 4, 5, 6, 7, 8};
+int servoPin[] = {3, 4, 8, 6, 7, 5};//Current Jugad
+//int servoPin[] = {3, 4, 5, 6, 7, 8};// Original
+
 /* Z_DIRECTION
    +-----------------------+
    | 0                   1 |
