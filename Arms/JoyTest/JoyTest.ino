@@ -19,7 +19,7 @@ struct pdcv p_6dof[] = {
 
 struct pdcv p_4dof[] = {
   {6, 7, true},
-  {27, 29, false},
+  {44, 45, false},
   {30, 31, false},
   {39, 41, false}
 };
@@ -147,7 +147,7 @@ void ArmMove(int mode) {
         }
       }
     }
-    Serial1.println(_4dof[3]);
+    Serial1.println(_6dof[0]);
     Serial1.flush();
 
   }
@@ -156,7 +156,7 @@ void ArmMove(int mode) {
 
 #define sim_size 3
 int ind[] = {1, 2, 3};
-int speeds[] = {255,127,255};
+int speeds[] = {130,130,130};
 void Arm_Simultaneous(int mode)
 {
   if (!prevData.equals(data)) {
@@ -206,8 +206,8 @@ void loop() {
     Serial1.flush();
     sscanf(&data[0], ArmFormat, &_4dof[0], &_4dof[1], &_4dof[2], &_4dof[3], &_4dof[4], &_6dof[0], &_6dof[1], &_6dof[2], &_6dof[3], &_6dof[4], &_6dof[5]);
   }
-  //ArmMove(1);
-  ArmMove(0);
+  //ArmMove(1);//6 dof
+  //ArmMove(0);//4 dof
   /*
     if(!prevData.equals(data))
     {
@@ -215,7 +215,7 @@ void loop() {
     Serial1.flush();
     }
   */
-  //Arm_Simultaneous(1);
+  Arm_Simultaneous(1);
   prevData = data;
   for (int i = 0; i < 5; i++) {
     if (i < 4) {
