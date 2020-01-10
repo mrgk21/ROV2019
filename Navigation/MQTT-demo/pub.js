@@ -82,7 +82,7 @@ var gripper6 = false;
 
 //Mode switch booleans
 const ModeEnum = Object.freeze({"nav":1, "dof_4":2, "dof_6":3});
-const HatState = Object.freeze({"ZERO":1.29, "UP":-1.00, "DOWN":0.14,"LEFT":0.71,"RIGHT":-0.43});
+//const HatState = Object.freeze({"ZERO":1.29, "UP":-1.00, "DOWN":0.14,"LEFT":0.71,"RIGHT":-0.43});
 var joyMode = undefined;
 
 function map(value,range_min,range_max,out_range_min,out_range_max)
@@ -176,15 +176,15 @@ io.on('connection',function(socket){
 				joyMode = ModeEnum.dof_6;
 				console.log("ARM_6 MODE:");
 			}
-			if(data["axes"][4] == HatState.ZERO)
+			if(data["axes"][4] == 0)
 			{
 				pump = 0;
 			}
-			else if(data["axes"][4] == HatState.UP)
+			else if(data["axes"][4] == 1)
 			{
 				pump = 1;	
 			}
-			else if(data["axes"][4] == HatState.DOWN)
+			else if(data["axes"][4] == -1)
 			{
 				pump = -1;
 			}

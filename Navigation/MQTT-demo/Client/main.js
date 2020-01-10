@@ -1,6 +1,6 @@
 var socket = io();
 var msg;
-var thresh=0.1;
+var thresh=10;
 
 
 var haveEvents = 'ongamepadconnected' in window;
@@ -21,7 +21,7 @@ function connecthandler(e) {
 function addgamepad(gamepad) {
 	controllers[gamepad.index] = gamepad;
 	ServerDetectedJoy[gamepad.index] = {id:gamepad.id,status:false};
-  	$("#controller1").append("<h1>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h1><br><div id='gp1_axes'></div>");
+  	$("#controller1").append("<h1>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h1><br><div id='gp1_axes'></div><br><div id='gp1_hats'></div><br><div id='gp1_buttons'></div>");
   	interval = setInterval(updateStatus,1000/60);
 }
 
@@ -62,15 +62,30 @@ function updateStatus()
 		var count=0;
 	    var controller = controllers[j];
 	    var buttons= [];
-	    var axes = [controller.axes[0].toFixed(2),-controller.axes[1].toFixed(2),controller.axes[5].toFixed(2),-parseInt(controller.axes[6].toFixed(2))];
+	    var axes = [Math.floor(controller.axes[0]*100),-Math.floor(controller.axes[1]*100),Math.floor(controller.axes[2]*100),-parseInt(controller.axes[3].toFixed(2)),controller.axes[5]];
+		var hats = [controller.axes[4],controller.axes[5]];
+		var c_axes = controller.axes;
 	    $("#gp1_axes").empty();
+		$("#gp1_buttons").empty();
+		$("#gp1_hats").empty();
 	    for(i in axes)
 	    {
-			$("#gp1_axes").append("<span> axes["+i+"]: "+axes[i]+"</span><br>");
-	    }
+			if(i<4)
+			{
+				$("#gp1_axes").append("<span> axes["+i+"]: "+axes[i]+"</span><br>");
+			}
+		}
+		for(i in hats)
+	    {
+			$("#gp1_hats").append("<span> Hats["+i+"]: "+hats[i]+"</span><br>");
+		}
 	    for(i in controller.buttons)
 	    {
 	    	buttons.push(controller.buttons[i].value);
+	    }
+	    for(i in buttons)
+	    {
+			$("#gp1_buttons").append("<span> buttons["+i+"]: "+buttons[i]+"</span><br>");
 	    }
 	    if(prev_btns.length==0)
 	    {
@@ -96,17 +111,22 @@ function updateStatus()
 			for(i in axes)
 			{
 				prevAxes.push(axes[i]);
-		  	}
+			}
 		}
 		else
 		{
 			var msg_axes=[];
-			
 		  	for(j in prevAxes)
 		  	{
-		  		if(Math.abs(prevAxes[j]-axes[j])> thresh)
+		  		if((j==4||j==3) && prevAxes[j] != axes[j])
 		  		{
+		  			console.log(j+": "+axes[j]);
 		  			msg_axes.push(axes[j]);
+		  			count++;
+		  		}
+		  		else if(Math.abs(prevAxes[j]-axes[j])> thresh && j<3)
+		  		{
+		  			msg_axes.push(axes[j] - (axes[j]%10));
 		  			count++;
 		  		}
 		  		else
@@ -114,6 +134,7 @@ function updateStatus()
 		  			msg_axes.push(prevAxes[j]);	
 		  		}
 		  	}
+			//console.log(prevAxes);
 		  	for(j in msg_axes)
 		  	{
 		  		prevAxes[j] = msg_axes[j];
@@ -123,7 +144,7 @@ function updateStatus()
 		{
 			msg = {buttons: buttons,axes: msg_axes};
 		  	//msg = JSON.stringify(msg);
-		  	//console.log(msg);
+		  	console.log(msg);
 		  	socket.emit('message',msg);
 		}
 	}
