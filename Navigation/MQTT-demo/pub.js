@@ -1,3 +1,10 @@
+var args = process.argv.slice(2);
+var ip="192.168.0.13";
+if(args.indexOf("-h") != -1)
+{
+	ip =args[args.indexOf("-h")+1];
+}
+
 var mqtt = require('mqtt');
 var express = require('express');
 var app = express();
@@ -8,7 +15,7 @@ app.use('/Client',express.static(__dirname + '/Client'));
 
 var server = app.listen(8000,'localhost');
 var io = require('socket.io').listen(server);
-var client  = mqtt.connect('mqtt://192.168.43.128');
+var client  = mqtt.connect('mqtt://'+ip);
 
 client.on('connect', function () {
     client.subscribe('navFeed', function (err) {
@@ -31,6 +38,13 @@ client.on('connect', function () {
         console.log('subscribed to link6D');
       }
     });
+
+    client.subscribe('pumpSolenoid', function (err) {
+      if (!err) 
+      {
+      	console.log('subscribed to pumpSolenoid');
+      }
+    });
 });
 
 client.on('message', function (topic, message) {
@@ -41,10 +55,44 @@ client.on('message', function (topic, message) {
 
 
 var controllers=[];
+
+// Change in data check
 var prev_velocities = undefined;
+var prev_arm4 = undefined;
+var prev_arm6 = undefined;
+var prev_pump = undefined;
+
+//DATA elements
 var velocities={x:0,y:0,z:0};
-var link4D = {'1':0,'2':0,'3':0,'4':0};
+var link4D = {'1':0,'2':0,'3':0,'4':0,'5':0};
 var link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
+var pump = 0;
+
+//Link counters
+var curr_l4=0;
+var curr_l6=0;
+
+var changeLink = false;
+var buttonReleased = true;
+var toggleButtonReleased = true;
+
+//ToggleButtons
+var gripper4 = false;
+var gripper6 = false;
+
+//Mode switch booleans
+const ModeEnum = Object.freeze({"nav":1, "dof_4":2, "dof_6":3});
+const HatState = Object.freeze({"ZERO":1.29, "UP":-1.00, "DOWN":0.14,"LEFT":0.71,"RIGHT":-0.43});
+var joyMode = undefined;
+
+function map(value,range_min,range_max,out_range_min,out_range_max)
+{
+	var slope = (out_range_max- out_range_min)/(range_max- range_min);
+	var newY = slope*(value - range_min) + out_range_min;
+	return newY;
+}
+//map(30,-100,100,-255,255);
+
 
 io.on('connection',function(socket){
     socket.emit('serverOnline');
@@ -97,57 +145,168 @@ io.on('connection',function(socket){
         velocities.x = 0;
         velocities.y = 0;
         velocities.z = 0;
+        link4D = {'1':0,'2':0,'3':0,'4':0};
+		link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
+        pump = 0;
         var msg = JSON.stringify(velocities);
         client.publish('navFeed1',msg);
+        msg = JSON.stringify(link4D);
+        client.publish('link4D',msg);
+        msg = JSON.stringify(link6D);
+        client.publish('link6D',msg);
+        msg = JSON.stringify(pump);
+        client.publish('pumpSolenoid',msg);
+
     });
     socket.on('message',function (data) {
         if(controllers.length>0)
         {
-			//velocities={x:0,y:0,z:0};
-			if(data["axes"][1] > 0.5)
+			if(data["buttons"][2])
 			{
-				velocities.y = 1;
+				joyMode = ModeEnum.nav;
+				console.log("NAVIGATION MODE:");
 			}
-			else if(data["axes"][1] < -0.5)
+			if(data["buttons"][3])
 			{
-				velocities.y = -1;
+				joyMode = ModeEnum.dof_4;
+				console.log("ARM_4 MODE:");
 			}
-			else
+			if(data["buttons"][4])
 			{
-				velocities.y = 0;	
+				joyMode = ModeEnum.dof_6;
+				console.log("ARM_6 MODE:");
+			}
+			if(data["axes"][4] == HatState.ZERO)
+			{
+				pump = 0;
+			}
+			else if(data["axes"][4] == HatState.UP)
+			{
+				pump = 1;	
+			}
+			else if(data["axes"][4] == HatState.DOWN)
+			{
+				pump = -1;
+			}
+			if(pump != prev_pump)
+			{
+				prev_pump = pump;
+				var msg = JSON.stringify({dir:pump});
+				client.publish('pumpSolenoid',msg);
 			}
 
-			velocities.z = data["axes"][3];
-			var msg = JSON.stringify(velocities);
-            if(prev_velocities == undefined)
-            {
-            	prev_velocities=msg;
-            }
-            else
-            {
-            	if(!(msg===prev_velocities))
-            	{
-            		prev_velocities = msg;
-            		var l4 = JSON.stringify(link4D);
-            		var l6 = JSON.stringify(link6D);
-            		client.publish('navFeed',msg);
-            		client.publish('link4D',l4);
-            		client.publish('link6D',l6);
+			if(joyMode != ModeEnum.nav)
+			{
+				if(data["buttons"][0] && !changeLink && buttonReleased)
+				{
+					changeLink = true;
+					buttonReleased = false;
+				}
+				else if(data["buttons"][0] == 0)
+				{
+					buttonReleased = true;
+				}
 
-            		if(link4D['1']==0)
-            		{
-            			link4D = {'1':1,'2':1,'3':1,'4':1};
-						link6D = {'1':1,'2':1,'3':1,'4':1,'5':1,'6':1};
-            		}
-            		else if(link4D['1']==1)
-            		{
-            			link4D = {'1':0,'2':0,'3':0,'4':0};
-						link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
-            		}
-            	}
-            }
+				if(data["buttons"][5] && toggleButtonReleased)
+				{
+					if(joyMode == ModeEnum.dof_4)
+					{
+						gripper4 = !gripper4;
+						link4D["5"] = gripper4===true? 1 : 0;
+					}
+					if(joyMode == ModeEnum.dof_6)
+					{
+						gripper6 = !gripper6;
+						link6D["6"] = gripper6===true?1 : 0;
+					}
+					toggleButtonReleased = false;
+				}
+				else if(data["buttons"][5] == 0)
+				{
+					toggleButtonReleased = true;
+				}
+
+			}
+			if(joyMode == ModeEnum.nav)
+			{
+				if(data["axes"][1] > 50)
+				{
+					velocities.y = 1;
+				}
+				else if(data["axes"][1] < -50)
+				{
+					velocities.y = -1;
+				}
+				else
+				{
+					velocities.y = 0;
+				}
+				velocities.z = data["axes"][3];
+				var msg = JSON.stringify(velocities);
+	            if(prev_velocities == undefined)
+	            {
+	            	prev_velocities=msg;
+	            }
+	            else
+	            {
+	            	if(!(msg===prev_velocities))
+	            	{
+	            		prev_velocities = msg;
+	            		client.publish('navFeed',msg);
+	            	}
+	            }
+        	}
+
+        	if(joyMode == ModeEnum.dof_4)
+        	{
+        		if(changeLink)
+        		{
+        			curr_l4++;
+        			curr_l4%=4;
+        			changeLink = false;
+        			link4D = {'1':0,'2':0,'3':0,'4':0,'5':0};
+        		}
+        		link4D[(curr_l4+1).toString()] = parseInt(map(data["axes"][1],-100,100,-255,255));
+
+        		var msg = JSON.stringify(link4D);
+	            if(prev_arm4 == undefined)
+	            {
+	            	prev_arm4=msg;
+	            }
+	            else
+	            {
+	            	if(!(msg===prev_arm4))
+	            	{
+	            		prev_arm4 = msg;
+	            		client.publish('link4D',msg);
+	            	}
+	            }
+        	}
+
+        	if(joyMode == ModeEnum.dof_6)
+        	{
+        		if(changeLink)
+        		{
+        			curr_l6++;
+        			curr_l6%=5;
+        			changeLink = false;
+        			link6D = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0};
+        		}
+        		link6D[(curr_l6+1).toString()] = parseInt(map(data["axes"][1],-100,100,-255,255));
+        		var msg = JSON.stringify(link6D);
+	            if(prev_arm6 == undefined)
+	            {
+	            	prev_arm6=msg;
+	            }
+	            else
+	            {
+	            	if(!(msg===prev_arm6))
+	            	{
+	            		prev_arm6 = msg;
+	            		client.publish('link6D',msg);
+	            	}
+	            }
+        	}
         }
-
-
     });
 });
