@@ -5,6 +5,9 @@
 #include "MPU6050.h"
 
 /********** VARIABLES *******/
+bool isMPUinit = false;
+
+
 const char* NavFormat = "%d, %d, %d, %d";
 int vel[4] = {0};
 String data, prevData;
@@ -12,8 +15,8 @@ String data, prevData;
 
 
 /**** PUMP SOLENOID *****/
-#define PUMP_PIN 52
-#define SOL_PIN 53
+#define PUMP_PIN A6
+#define SOL_PIN A7
 
 void PumpSetup()
 {
@@ -47,7 +50,7 @@ void PumpVel(int z)
 
 /*********** MPU AND STEPPER ****************/
 
-int pitch=0, roll, flag, prev_pitch=0;
+int pitch = 0, roll, flag, prev_pitch = 0;
 int speed = 0;
 MPU6050 mpu;
 AccelStepper stepper(1, STEPPER_PUL, STEPPER_DIR);
@@ -171,40 +174,58 @@ void MoveThrusters()
 
 /***************   MAIN CODE  *********************/
 void setup() {
-  Serial1.begin(9600);
-  Serial1.setTimeout(20);
-  
+  Serial.begin(9600);
+  Serial.setTimeout(20);
+  Serial2.begin(9600);
+  Serial2.setTimeout(20);
   debug_pump(PumpSetup();)
   debug_step(
     stepper.setEnablePin(STEPPER_EN);
     stepper.setMaxSpeed(STEPPER_MAXSPEED);
     while (!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G));
+    isMPUinit = true;
   )
-  debug_thr(
-  for (int i = 0; i < 6; i++)
+    debug_thr(
+      for (int i = 0; i < 6; i++)
   {
     thrusters[i].attach(servoPin[i]);
-    thrusters[i].writeMicroseconds(T_ZERO);
-    delay(100);
-  }
+      thrusters[i].writeMicroseconds(T_ZERO);
+      delay(100);
+    }
   delay(7000);
   )
 }
 
 void loop() {
-  
-  if (Serial1.available()) {
-    data = Serial1.readString();
-    Serial1.flush();
-    sscanf(&data[0], NavFormat, &vel[0], &vel[1], &vel[2],&vel[3]);
+
+  if (Serial2.available()) {
+    data = Serial2.readString();
+    Serial2.flush();
+    Serial.println(data);
+    Serial.flush();
+    if (data.substring(0,12)== "is MPU init?")
+    {
+      if (isMPUinit)
+      {
+        Serial2.println("HANDSHAKE SUCCESSFUL");
+      }
+    }
+    else
+    {
+      sscanf(&data[0], NavFormat, &vel[0], &vel[1], &vel[2], &vel[3]);
+    }
   }
   if (prevData != data)
   {
     debug_thr(MoveThrusters();)
     debug_pump(PumpVel(vel[3]);)
-    Serial1.println(data);
-    Serial1.flush();
   }
+  
   debug_step(PitchCorrect();)
+  if(isMPUinit)
+  {
+    Serial2.println(pitch);
+    Serial2.flush();
+  }
   prevData = data;
 }

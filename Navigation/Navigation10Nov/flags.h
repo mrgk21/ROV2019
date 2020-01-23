@@ -1,5 +1,4 @@
 /************** DEBUG FLAGS ****************/
-#define mySerial Serial
 #define THR_ON 1
 #define PUMP_ON 1 //THIS IS  temp
 #define STEPPER_ON 1
