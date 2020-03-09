@@ -3,6 +3,25 @@ import time
 import json
 import serial
 
+#FLAGS FOR TURNING  ON ARMS  AND NAVIGATION BOARDS
+NAVIGATION_ON = True
+ARMS_ON = False
+
+#FLAGS FOR TURNING ON SERIAL MODULES
+SERIAL_WIRE_ON = False
+SERIAL_FTDI_ON = True
+
+
+#Choosing which serial is used for which board
+Navigation = 'ftdi'
+
+Arms = ''
+if Navigation=="ftdi":
+	Arms = "wire"
+elif Navigation=="wire":
+	Arms="ftdi"
+
+#---------------------------------- MQTT MESSAGES -------------------------------------------------
 
 def on_message(client, userdata, msg):
 	global joyArm, joyNav, system, link, navFeed, link4D, link6D, pumpSolenoid
@@ -25,6 +44,10 @@ def on_message(client, userdata, msg):
 	#temp
 	if msg.topic == "link":
 		link = json.loads(str(msg.payload.decode('utf-8')))
+
+
+
+#----------------------------- DATA FRAMES ---------------------------------------------------------------
 
 # this is for sending data to arduino
 navArd = {
@@ -102,6 +125,9 @@ system = {
     "startNav": False
 }
 
+
+#---------------------- MQTT INITIALISATION ---------------------------------
+
 client = mqtt.Client("pi3")
 client.connect("10.42.0.1", 1883, 60)
 client.subscribe("link4D", 0)
@@ -112,14 +138,17 @@ client.subscribe("pumpSolenoid", 0)
 client.on_message = on_message
 client.loop_start()
 
-#ser1 = serial.Serial(
-#    port='/dev/ttyS0',
-#    baudrate=9600,
-#    parity=serial.PARITY_NONE,
-#    stopbits=serial.STOPBITS_ONE,
-#    bytesize=serial.EIGHTBITS,
-#    timeout=1
-#)
+
+#------------------------  SERIAL MODULE INIT -------------------------------
+
+ser1 = serial.Serial(
+    port='/dev/ttyS0',
+    baudrate=9600,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    bytesize=serial.EIGHTBITS,
+    timeout=1
+)
 
 ser2 = serial.Serial(
     port='/dev/ttyUSB0',
@@ -130,40 +159,99 @@ ser2 = serial.Serial(
     timeout=1
 )
 
+
+
+#-----------------  LOCAL DATA VARS -------------------------------------
+
+#Navigation data
 mega1PrevData = 0
 mega1Data = 1
 
+#Arms data
 mega2PrevData = 0
 mega2Data = 1
 
 mega1Rec = ""
-msg = "is MPU init?"
+mega2Rec = ""
 
-while True:
-	ser2.write(bytes(msg,'utf-8'))
-	mega1Rec = (ser2.readline()).decode('utf-8').rstrip('\r\n')
-	if mega1Rec == "HANDSHAKE SUCCESSFUL":
-		print("MPU INITIALIZED")
-		break
+
+#---------------- WAIT FOR MPU INIT ------------------------------
+if NAVIGATION_ON:
+	msg = "is MPU init?"
+	while True:
+		if Navigation == 'ftdi':
+			if SERIAL_FTDI_ON:
+				ser2.write(bytes(msg,'utf-8'))
+				mega1Rec = (ser2.readline()).decode('utf-8').rstrip('\r\n')
+		elif Navigation =='wire':
+			if SERIAL_WIRE_ON:
+				ser1.write(bytes(msg,'utf-8'))
+				mega1Rec = (ser1.readline()).decode('utf-8').rstrip('\r\n')
+
+		if mega1Rec == "HANDSHAKE SUCCESSFUL":
+			print("MPU INITIALIZED")
+			break
+
+
+
+
+#--------------------------  MAIN COMM LOOP --------------------------------
 
 count=0
+boardSwitch=True
+if NAVIGATION_ON:
+	boardSwitch = True
+elif ARMS_ON:
+	boardSwitch = False
 
 while True:
 #10 to 1 Rx to Tx ratio
 	if count<10:
-		mega1Rec = ser2.readline()
-		print("mega1Rec: ",mega1Rec.decode('utf-8'),end="")
+		if NAVIGATION_ON and boardSwitch:
+			if Navigation == 'ftdi':
+				mega1Rec = ser2.readline()
+			elif Navigation == 'wire':
+				mega1Rec = ser1.readline()
+
+			print("mega1Rec: ",mega1Rec.decode('utf-8'),end="")
+		if ARMS_ON and not boardSwitch:
+			if Arms=='ftdi':
+				mega2Rec = ser2.readline()
+			elif Arms=='wire':
+				mega2Rec = ser1.readline()
+			print("mega2Rec: ",mega2Rec.decode('utf-8'),end="")
+		if NAVIGATION_ON and ARMS_ON:
+			boardSwitch= not boardSwitch
+
 		count+=1
 	else:
+
 		mega1Data = str(list(navFeed.values())).strip('[]')
 		mega1Data += ", " + str(list(pumpSolenoid.values())).strip('[]')
 		if mega1PrevData != mega1Data:
-			ser2.write(bytes(mega1Data, 'utf-8'))
-			print("Mega1 data: ",mega1Data)
-		mega1PrevData = mega1Data
-		count = 0
-	mega1Rec = ""
+			if NAVIGATION_ON:
+				if Navigation=="ftdi":
+					ser2.write(bytes(mega1Data, 'utf-8'))
+				elif Navigation=="wire":
+					ser1.write(bytes(mega1Data,'utf-8'))
+				print("Mega1 data: ",mega1Data)
 
+		if mega2PrevData != mega2Data:
+			if ARMS_ON:
+				if Arms=="ftdi":
+					ser2.write(bytes(mega2Data, 'utf-8'))
+				elif Arms=="wire":
+					ser1.write(bytes(mega2Data,'utf-8'))
+				print("Mega2 data: ",mega2Data)
+
+		mega1PrevData = mega1Data
+		mega2PrevData = mega2Data
+		count = 0
+
+
+
+	mega1Rec = ""
+	mega2Rec = ""
 
 #	client.publish("ikFeed", "\tiger jinda hai")
 #	client.publish("navFeed", json.dumps(navFeed))
