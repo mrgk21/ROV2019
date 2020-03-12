@@ -224,7 +224,11 @@ void loop() {
   debug_step(PitchCorrect();)
   if(isMPUinit)
   {
-    Serial2.println(pitch);
+    Serial2.print(pitch);
+    Serial2.print(',');
+    Serial2.print(pitch);
+    Serial2.print(',');
+    Serial2.print(pitch);
     Serial2.flush();
   }
   prevData = data;
