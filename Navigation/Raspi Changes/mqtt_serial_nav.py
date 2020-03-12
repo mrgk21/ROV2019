@@ -69,7 +69,7 @@ client.loop_start()
 
 #------------------------  SERIAL MODULE INIT -------------------------------
 ser1 = serial.Serial(
-    port='/dev/ttyS4',
+    port='/dev/ttyUSB0',
     baudrate=9600,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
@@ -80,8 +80,8 @@ ser1 = serial.Serial(
 #-----------------  LOCAL DATA VARS -------------------------------------
 
 #Navigation data
-mega1PrevData = 0
-mega1Data = 0
+mega1PrevData = ""
+mega1Data = ""
 mega1Rec = ""
 
 
@@ -91,31 +91,29 @@ mega1Rec = ""
 msg = "is MPU init?"
 while True:
 	ser1.write(bytes(msg,'utf-8'))
-	mega1Rec = (ser1.readline()).decode('utf-8').rstrip('\r\n')
+	mega1Rec = (ser1.readline()).decode('utf-8',errors='replace').rstrip('\r\n')
 
 	if mega1Rec == "HANDSHAKE SUCCESSFUL":
 		print("MPU INITIALIZED")
 		break
 
 
-
-
 #--------------------------  MAIN COMM LOOP --------------------------------
 count=0
 while True:
 #10 to 1 Rx to Tx ratio
-if count<10:
-	mega1Rec = ser1.readline()
-	mega1Rec = mega1Rec.decode('utf-8').split(',')
-	mega1Rec = [float(x) for x in mega1Rec]
-	print(mega1Rec)
-	count+=1
-else:
+	if count<5:
+		mega1Rec = (ser1.readline()).decode('utf-8').rstrip('\r\n').split(',')
+		mega1Rec = [float(x) for x in mega1Rec]
+		print('mega1Rec: ',mega1Rec)
+		count += 1
+	else:
 
-	mega1Data = str(list(navFeed.values())).strip('[]')
-	mega1Data += ", " + str(list(pumpSolenoid.values())).strip('[]')
-	if mega1PrevData != mega1Data:
-		ser1.write(bytes(mega1Data,'utf-8'))
+		mega1Data = str(list(navFeed.values())).strip('[]')
+		mega1Data += ", " + str(list(pumpSolenoid.values())).strip('[]')
+		if mega1PrevData != mega1Data:
+			print('mega1Data: ',mega1Data)
+			ser1.write(bytes(mega1Data,'utf-8'))
 		mega1PrevData = mega1Data
 		count = 0
 
