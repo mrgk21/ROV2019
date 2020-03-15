@@ -1,5 +1,5 @@
 var socket = io();
-var msg;
+var msg = "";
 var thresh=10;
 
 
@@ -21,7 +21,8 @@ function connecthandler(e) {
 function addgamepad(gamepad) {
 	controllers[gamepad.index] = gamepad;
 	ServerDetectedJoy[gamepad.index] = {id:gamepad.id,status:false};
-  	$("#controller1").append("<h1>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h1><br><div id='gp1_axes'></div><br><div id='gp1_hats'></div><br><div id='gp1_buttons'></div>");
+	$("body").append("<div class='controller' id='controller"+gamepad.index+"'>");
+  	$("#controller"+gamepad.index).append("<h4>Gamepad connected at index "+gamepad.index +": "+gamepad.id+". "+gamepad.buttons.length+" buttons, "+gamepad.axes.length+" axes.</h4><br><div id='gp1_axes'></div><br><div id='gp1_hats'></div><br><div id='gp1_buttons'></div>");
   	interval = setInterval(updateStatus,1000/60);
 }
 
@@ -120,7 +121,7 @@ function updateStatus()
 		  	{
 		  		if((j==4||j==3) && prevAxes[j] != axes[j])
 		  		{
-		  			console.log(j+": "+axes[j]);
+		  			//console.log(j+": "+axes[j]);
 		  			msg_axes.push(axes[j]);
 		  			count++;
 		  		}
@@ -144,7 +145,7 @@ function updateStatus()
 		{
 			msg = {buttons: buttons,axes: msg_axes};
 		  	//msg = JSON.stringify(msg);
-		  	console.log(msg);
+		  	//console.log(msg);
 		  	socket.emit('message',msg);
 		}
 	}
