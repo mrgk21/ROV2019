@@ -1,0 +1,38 @@
+body
+{
+    margin:0;
+    background-color:#4682b4;
+    color:white;
+}
+
+.joyControl
+{
+    width: 150px;
+    height:150px;
+    margin:0 5px;
+    display:inline-block;
+}
+
+.threeRender
+{
+    width: 400px;
+    height:400px;
+    border: 1px solid black;
+}
+
+.joystickDiv
+{
+    display:inline-block;
+    position: relative;
+    width:100px;
+    top:0;
+    margin: 5px;
+    padding: 5px;    
+}
+
+.controller
+{
+    position: absolute;
+    left:500px;
+    top: 0px;
+}
