@@ -140,12 +140,10 @@ $(document).ready(function () {
 	//Arm config currently assumed angle is zero.
 	Joints = [
 		new Joint(0, 0),
-		new Joint(40, 0),
-		new Joint(80, 0),
-		new Joint(120, 0),
-		new Joint(160, 0),
-		new Joint(200, 0),
-		new Joint(240, 0),
+		new Joint(50, 0),
+		new Joint(110, 0),
+		new Joint(150, 0),
+		new Joint(180, 0),
 	];
 	console.log(Joints);
 	Links = [];

@@ -1,5 +1,5 @@
-#define MODE 1 //JOYSTICK 0
-               //MANUAL 1
+#define MODE 1 /*JOYSTICK 0
+               	 MANUAL   1 */
 
 #define debug_manual(x) if(MODE){x}
 #define debug_joystick(x) if(!MODE){x}

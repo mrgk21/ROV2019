@@ -5,7 +5,7 @@ struct pdcv
 {
   int pin1;
   int pin2;
-  int reverseDir;
+  bool reverseDir;
   int OutputNegative;
   float Output;
   bool canActuate;
